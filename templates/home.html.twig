@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for week in weeks %}
+        <div class="card border-primary mt-3">
+            <div class="card-header text-bg-primary">
+                Week #{{ week.index + 1 }}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for assignment in week.assignments %}
+                        <div class="col">
+                            <div class="card border-success">
+                                <div class="card-header text-bg-success">
+                                    <div class="d-flex justify-content-between align-items-center" data-bs-title="{{ assignment.tasks|length }} Task(s)" data-bs-placement="left" data-bs-toggle="tooltip">
+                                        <span>{{ assignment.developer.name }}</span> {% if assignment.tasks|length > 0 %}<span class="badge text-bg-light">{{ assignment.tasks|reduce((carry, v) => carry + v.point) }}/{{ assignment.developer.workingHours * assignment.developer.power }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        {% for assignedTask in assignment.tasks %}
+                                            <li class="list-group-item">{{ assignedTask.task.name }} ({{ assignedTask.point }})</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-3">No collected data found.</div>
+    {% endfor %}
+{% endblock %}
+
+{% block bottomJavascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        });
+    </script>
+{% endblock %}
